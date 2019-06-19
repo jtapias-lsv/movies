@@ -1,16 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Info</title>
-</head>
-<body>
-<h1>Create/Update Genre</h1>
-<form role="form" method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Save">
-</form>
+{% extends 'base.html' %}
+<title>{% block title %}Info Genre{% endblock %}</title>
 
-</body>
-</html>
+{% block content %}
+
+    <h1>Create/Update Genre</h1>
+    <form role="form" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Save">
+    </form>
+
+{% endblock content %}

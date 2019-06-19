@@ -1,0 +1,10 @@
+{% extends 'base_movie_app.html' %}
+
+
+{% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Go!</button>
+    </form>
+{% endblock %}

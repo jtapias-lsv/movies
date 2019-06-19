@@ -1,0 +1,44 @@
+{% extends 'base_movie_app.html' %}
+{% load static %}
+
+{% load movie_app_extras %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+    <div class="jumbotron">
+        <div class="row">
+            <div class="col-4">
+                <div class="cover" style="background-image: url('{{ best_rated_movie.poster.url }}');"></div>
+            </div>
+            <div class="col-8">
+                <h1 class="display-5">{{ best_rated_movie.title }}</h1>
+                <p class="lead">{{ best_rated_value|own_format_float }} / {{ best_rated_movie.movierate_set.count }}</p>
+                <p>{{ best_rated_movie.detail }}</p>
+            </div>
+        </div>
+    </div>
+    <ul><div class="row">
+        {% for movie in movie_list %}
+
+                <div class="col-4">
+                    <div class="card" style="width: 18rem">
+                        <img class="card-img-top" src="{{ movie.poster.url }}" alt="Card image cap">
+                        <div class="card-body">
+                            <a href="{% url 'movies_app:movie_detail' movie.slug %}"><h5>{{ movie.title }}</h5></a>
+                            <p class="card-text">{{ movie.about }}</p>
+                            <a href="{% url 'movies_app:movie_detail' movie.slug %}" class="btn btn-primary">Details</a>
+                        </div>
+                    </div>
+                </div>
+
+        {% endfor %} </div>
+    </ul>
+{% endblock content %}
+
+{% block extra_js %}
+    <script>
+        console.log('Im in Home')
+    </script>
+{% endblock extra_js %}

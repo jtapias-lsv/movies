@@ -1,15 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>lista</title>
-</head>
-<body>
+{% extends 'base.html' %}
+<title>{% block title %}Lista Movie{% endblock %}</title>
     <h1>LISTA</h1>
     {% if object_list %}
         {% for l in object_list %}
             {{ l.title }} - {{ l.genre }} <a href="{% url 'movies_app:update_movie' l.id  %}">editar</a><br>
         {% endfor %}
     {% endif %}
-</body>
-</html>

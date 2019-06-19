@@ -13,16 +13,23 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.conf.urls import url
-from django.urls import path, include
-
 from  django.conf import settings
+from django.contrib import admin
+from django.urls import path, include
+from django.conf.urls import url
+from django.conf.urls.static import static
+
+
 from django.views.static import serve
+from movies_app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('movies_app/', include('movies_app.urls'))
+    path('movies_app/', include('movies_app.urls')),
+    path(f'api/{settings.API_VERSION}/',include(('movies_app.api.urls','movies_app.api'), namespace='api-movies_app')),
+    path('login/',views.MyLoginView.as_view(),name='mylogin'),
+    path('logout/',views.MyLogoutView.as_view(),name='mylogout'),
+    path('logeo/', include('django.contrib.auth.urls'))
 ]
 
 if settings.DEBUG:

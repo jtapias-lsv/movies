@@ -15,9 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
-
-MEDIA_URL = "/media/"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -25,7 +22,7 @@ MEDIA_URL = "/media/"
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'vdn$$89h=@^yb-u(7vn=#0a6weu5i^(hojt92b18@*r4an6%i5'
 
-
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -33,7 +30,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'movies_app',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'debug_toolbar',
+    'rest_framework',
+
+    'movies_app',
+    'movies_app.api'
 
 ]
 
@@ -54,6 +54,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'movies_app.middleware.VerificationMiddleware'
+    #'movies_app.middleware.DownloadIfDoesNotExistMiddleware'
 ]
 
 ROOT_URLCONF = 'movies.urls'
@@ -119,7 +121,22 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
+REST_FRAMEWORK = {
+
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
+
+
+MEDIA_URL = "/media/"
+
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+
+API_VERSION = 'v1'
 
 try:
     exec(open(os.path.join(BASE_DIR,'movies/local_settings.py')).read())
