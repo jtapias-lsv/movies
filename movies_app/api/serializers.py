@@ -25,16 +25,33 @@ class MovieOwnSerializerDetail(serializers.Serializer):
 
 # -------------------------------------------------------------------------------
 
-class MovieRateSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(read_only=True)
-    user = serializers.StringRelatedField()
-    movie = serializers.HyperlinkedRelatedField(read_only=True, view_name='movies_app:', lookup_field='slug')
+class MovieSerializer(serializers.ModelSerializer):
 
-    # movie = MovieSerializer() -----anidado
+    pk = serializers.IntegerField(source='id')
+    poster = serializers.ImageField(read_only=True)
+    trailer_url = serializers.URLField(required=False)
+
+    class Meta:
+        model = Movie
+        fields = ('title', 'duration', 'poster', 'detail',
+                  'trailer_url', 'genre', 'original_language',
+                  'country', 'release_date','pk')
+
+
+class MovieRateSerializer(serializers.ModelSerializer):
+
+    pk = serializers.IntegerField(source='id',read_only=True)
+    #id = serializers.HyperlinkedIdentityField(view_name='api-movies_app:movierate-detail-actions')
+    user = serializers.StringRelatedField()
+    # movie_link = serializers.HyperlinkedRelatedField(source='movie', read_only=True,
+    #                                                  view_name='movies_app:movie-de-up-de',
+    #                                                  lookup_field='slug')
+
+    movie = MovieSerializer(read_only=True)
 
     class Meta:
         model = Rate
-        fields = ('id', 'movie', 'user', 'rate')
+        fields = ('movie', 'user', 'pk', 'rate')
 
 
 
@@ -61,19 +78,17 @@ class MovieSerializerDetailUpdateDelete(serializers.ModelSerializer):
 
 
 class MovieRateSerializer2(serializers.ModelSerializer):
+
     id = serializers.HyperlinkedIdentityField(view_name='api-movies_app:movierate-detail-actions')
     user = serializers.StringRelatedField()
     movie_link = serializers.HyperlinkedRelatedField(source='movie', read_only=True,
                                                      view_name='api-movies_app:movie-detail-actions',
                                                      lookup_field='pk')
-    movie = MovieOwnSerializerList()
+    # read only para que no se muestre el formulario de creacion de movie
+    movie = MovieOwnSerializerList(read_only=True)
 
     class Meta:
         model = Rate
         fields = ('movie', 'user', 'rate', 'id', 'movie_link', 'pk')
 
 
-class MovieSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Movie
-        fields = ('id', 'title', 'duration', 'detail', 'poster')
