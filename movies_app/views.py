@@ -1,3 +1,4 @@
+from celery import chord, group
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseRedirect
@@ -7,14 +8,17 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView, F
 from django.urls import reverse_lazy
 from django.views.generic.list import BaseListView
 from rest_framework.generics import RetrieveAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.authtoken.models import Token
 #from rest_framework_xml.renderers import XMLRenderer
 #import time
 
 
 from django.core.management import call_command
 
+
+from movies_app.tasks import donwload_movie, send_email
 from .models import Genre, Movie, Rate, ValidatorToken
-from .forms import GenreCreateForm, MovieCreateForm, SimpleForm, MyLoginForm, SimpleForm2
+from .forms import GenreCreateForm, MovieCreateForm, SimpleForm, MyLoginForm, SimpleForm2, MyDownLoadForm
 
 from movies_app.api.serializers import MovieOwnSerializerList, MovieOwnSerializerDetail, MovieSerializerCreateList, \
     MovieSerializerDetailUpdateDelete, MovieRateSerializer
@@ -72,6 +76,28 @@ class MovieFormExample(CreateView):
     #def form_valid(self, form):
     #    pass
 
+class MyDownLoadView(View):
+
+    def __init__(self):
+        self.template_name = 'download.html'
+        self.form_class = MyDownLoadForm
+
+    def get(self, request, *args, **kwargs ):
+        return render(request, self.template_name, {'form':self.form_class})
+
+    def post(self, request):
+        my_form = MyDownLoadForm(request.POST)
+        if my_form.is_valid():
+            my_titles = my_form.cleaned_data['title_movie']
+            my_reciver = my_form.cleaned_data['reciver_mail']
+            my_list_movie = my_titles.split(", ")
+            temp_signature = []
+            for mov in my_list_movie:
+                temp_signature.append(donwload_movie.s(mov))
+
+            chord(group(*temp_signature))(send_email.s(my_reciver))
+
+        return HttpResponseRedirect(reverse_lazy('movies_app:download'))
 
 
 class MyLoginView(View):
@@ -89,11 +115,13 @@ class MyLoginView(View):
             my_user = my_form.cleaned_data['username']
             my_pass = my_form.cleaned_data['password']
             the_user = authenticate(username = my_user, password=my_pass)
+            Token.objects.update_or_create(user=my_user)
             if the_user is not None:
                 login(request,the_user)
                 if not ValidatorToken.objects.filter(user=the_user).exists():
                     vt = ValidatorToken()
                     vt.user = the_user
+                    donwload_movie.delay()
                     vt.save()
 
                 return HttpResponseRedirect(reverse_lazy('movies_app:home'))
@@ -106,7 +134,8 @@ class MyLogoutView(View):
 
     def get(self,request):
         my_id = request.user
-        ValidatorToken.objects.get(user=my_id).delete()
+        Token.objects.get(user=my_id).delete()
+        #ValidatorToken.objects.get(user=my_id).delete()
         logout(request)
         return HttpResponseRedirect(reverse_lazy('mylogin'))
 

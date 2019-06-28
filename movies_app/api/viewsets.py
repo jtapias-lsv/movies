@@ -10,21 +10,25 @@ from movies_app.models import Rate, Movie
 from rest_framework.decorators import action
 from rest_framework.permissions import DjangoModelPermissions
 from movies_app.api.permissions import IsAuthenticatedOrReadOnlyCustom
+from rest_framework.authentication import TokenAuthentication
 
 
 class ExampleViewset(viewsets.ReadOnlyModelViewSet):
 
     queryset = Rate.objects.all()
     serializer_class = MovieRateSerializer
+    authentication_classes = (TokenAuthentication,)
 
 class MovieViewset(viewsets.ModelViewSet):
+
     queryset = Movie.objects.all()
+    authentication_classes = (TokenAuthentication,)
+
     serializer_class = {
         'rate': MovieRateSerializer,
         'default': MovieSerializer
     }
     permission_classes = [DjangoModelPermissions,]
-    
 
 
     def get_serializer_class(self):

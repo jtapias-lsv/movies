@@ -61,3 +61,10 @@ class SimpleForm2(forms.ModelForm):
         instance.user = self.user
         instance.save()
         return instance
+
+
+
+class MyDownLoadForm(forms.Form):
+
+    title_movie = forms.CharField(label='Titulo', max_length=100)
+    reciver_mail = forms.CharField(label='Email', max_length=100)

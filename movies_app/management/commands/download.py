@@ -36,7 +36,10 @@ class Command(BaseCommand):
                 Command.saveMovie(l_url)
         else:
             url = 'http://www.omdbapi.com/?t='+title+'&apikey=8679f1c&type=movie'
-            Command.saveMovie(url)
+            if Command.saveMovie(url):
+                return str(title)
+            else:
+                return 'No se pudo descargar una pelicula con el parametro: ' + str(title)
 
 
     @staticmethod
@@ -80,4 +83,6 @@ class Command(BaseCommand):
         })
         d[0].movie.add(m[0])
         a[0].movie.add(m[0])
+
+        return m[1]
 
