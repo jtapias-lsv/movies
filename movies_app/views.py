@@ -117,9 +117,8 @@ class MySuggestionView(View):
             my_titles = my_form.cleaned_data['titles']
             my_list_movie = my_titles.split(", ")
             for movi in my_list_movie:
-                sg = Suggestion()
-                sg.title = movi
-                sg.save()
+                Suggestion.objects.get_or_create(title=movi)
+                Suggestion.objects
 
         return HttpResponseRedirect(reverse_lazy('movies_app:suggestion'))
 

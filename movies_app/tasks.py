@@ -1,7 +1,9 @@
 from celery._state import get_current_app
 from django.core.management import call_command
-from celery import Task
+from celery import Task, chord, group
 from django.core.mail import send_mail
+
+from movies_app.models import Suggestion
 
 app = get_current_app()
 
@@ -28,12 +30,29 @@ def donwload_movie(title):
     Args:
         title: movie tile to look for
 
-    Returns: movie title downloaded
+    Returns: downloaded movie title
 
     """
-    my_string = call_command('download', title)
-    return my_string
+    return call_command('download', title)
 
+
+@app.task()
+def delete_sugestion(p_id):
+    Suggestion.objects.get(id=p_id).delete()
+
+
+@app.task()
+def movie_suggestion():
+
+    movies = Suggestion.objects.all()
+
+    if movies:
+        temp_signature = []
+        for mov in movies:
+            temp_signature.append(donwload_movie.s(mov.title))
+            delete_sugestion(mov.id)
+
+        chord(group(*temp_signature))(send_email.s('jomitame@gmail.com'))
 
 
 # ------------AN EXAMPLE WITH CLASS ----------------------
