@@ -10,6 +10,7 @@ def add(x,y):
     print(x+y)
     return x+y
 
+
 @app.task()
 def send_email(p_body, p_reciver):
     send_mail(
@@ -22,10 +23,20 @@ def send_email(p_body, p_reciver):
 
 @app.task()
 def donwload_movie(title):
+    """
+
+    Args:
+        title: movie tile to look for
+
+    Returns: movie title downloaded
+
+    """
     my_string = call_command('download', title)
     return my_string
 
 
+
+# ------------AN EXAMPLE WITH CLASS ----------------------
 
 class MultiplyTask(Task):
 

@@ -18,6 +18,8 @@ from movies_app.api.viewsets import ExampleViewset, MovieViewset
 #          ExampleViewset.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy', 'patch': 'partial_update'}),
 #          name='m-e-d-a'),
 # ]
+
+# ------------------------CHANGING TO ROUTER ---------------------------------------------
 router = SimpleRouter()
 router.register('movie', MovieViewset)
 router.register('movierate',ExampleViewset)

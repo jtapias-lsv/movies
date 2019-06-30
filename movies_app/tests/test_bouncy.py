@@ -2,8 +2,15 @@ from unittest import TestCase
 import time
 
 
-def enlista(num:int) -> list:
-    '''Devuelve una lista con los digitos de un numero pasado por parámetro'''
+def en_lista(num:int) -> list:
+    """
+    function to make a list whit a number's digits
+    Args:
+        num: number to be separated in its digits
+
+    Returns: a list with parameter number's digits example: 234 -> [2,3,4]
+
+    """
     try:
         result = list(map(int, str(num)))
     except:
@@ -12,10 +19,18 @@ def enlista(num:int) -> list:
 
 
 def creciente(num:int) -> bool:
-    '''Devuelve True si el numero pasado por parámetro es creciente'''
-    lista = enlista(num)
+    """
+
+    Args:
+        num: number to be analized
+
+    Returns: a bool, True if number parameter is an increaser number
+
+    """
+
+    lista = en_lista(num)
     creci = True
-    # ciclo para la comparacion de digitos adyacentes
+    # loop for adjacent digits comparison
     for pos in range(0, len(str(num))-1):
         if lista[pos+1] < lista[pos]:
             creci = False
@@ -24,10 +39,18 @@ def creciente(num:int) -> bool:
 
 
 def decreciente(num:int) -> bool:
-    '''Devuelve True si el numero pasado por parámetro es decreciente'''
-    lista = enlista(num)
+    """
+
+    Args:
+        num: number to be analized
+
+    Returns: a bool, True if number parameter is an decreaser number
+
+    """
+
+    lista = en_lista(num)
     decre = True
-    # ciclo para la comparacion de digitos adyacentes
+    # loop for adjacent digits comparison
     for pos in range(0, len(str(num))-1):
         if lista[pos+1] > lista[pos]:
             decre = False
@@ -36,27 +59,32 @@ def decreciente(num:int) -> bool:
 
 
 def bouncy(percent:float) -> int:
-    '''Devuelve el primer número (mínimo) para el cual
-       la proporción de números bouncy es exactamente el 99%'''
-    i = 1  # variable que determina el total de numeros analizados
-    j = 0  # variable que determina la posición consecutiva del bouncy
-    k = 0  # variable que determina la proporción
-    # ciclo que se ejecuta hasta que se cumpla la condición
+    """
+
+    Args:
+        percent: number to be compared with the proportion division
+
+    Returns: Returns the first (minimum) number for which the proportion of bouncy numbers
+            is exactly the percentage passed by parameter
+
+    """
+
+    i = 1  # it determines total numbers analized
+    j = 0  # it determines position of bouncy number
+    k = 0  # it determine proportion
+    # infinite loop until condition mets
     while k != percent:
         if not creciente(i):
             if not decreciente(i):
-                j += 1  # incremento del consecutivo del bouncy
-                k = j/i  # calculo de la proporción
-                # condición de cumplimiento
+                j += 1
+                k = j/i
+
                 if k == percent:
-                    # imprime: numero mínimo y proporción
                     return i
-                    break  # interrupción del ciclo
+                    break
 
-        i += 1  # incremento del total de numeros analizados
+        i += 1
 
-# llamada a la función
-#print("El numero mínimo para 99 es: " + str(bouncy(0.99)))
 
 start = time.time()
 print(bouncy(0.99),time.time()-start)
@@ -64,10 +92,10 @@ print(bouncy(0.99),time.time()-start)
 class BouncyNumbersTest(TestCase):
 
     def test_is_a_list_whit_one(self):
-        assert isinstance(enlista(1), list)
+        assert isinstance(en_lista(1), list)
 
     def test_is_an_error(self):
-        assert isinstance(enlista('a'),list)
+        assert isinstance(en_lista('a'), list)
 
 
     def test_134468_is_increase_number(self):

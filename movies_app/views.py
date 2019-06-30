@@ -15,10 +15,11 @@ from rest_framework.authtoken.models import Token
 
 from django.core.management import call_command
 
-
+from movies_app.models import Suggestion
 from movies_app.tasks import donwload_movie, send_email
 from .models import Genre, Movie, Rate, ValidatorToken
-from .forms import GenreCreateForm, MovieCreateForm, SimpleForm, MyLoginForm, SimpleForm2, MyDownLoadForm
+from .forms import GenreCreateForm, MovieCreateForm, SimpleForm, MyLoginForm, SimpleForm2, MyDownLoadForm, \
+    MySuggestionForm
 
 from movies_app.api.serializers import MovieOwnSerializerList, MovieOwnSerializerDetail, MovieSerializerCreateList, \
     MovieSerializerDetailUpdateDelete, MovieRateSerializer
@@ -100,6 +101,30 @@ class MyDownLoadView(View):
         return HttpResponseRedirect(reverse_lazy('movies_app:download'))
 
 
+
+class MySuggestionView(View):
+
+    def __init__(self):
+        self.template_name = 'suggestion.html'
+        self.form_class = MySuggestionForm
+
+    def get(self, request, *args, **kwargs ):
+        return render(request, self.template_name, {'form':self.form_class})
+
+    def post(self, request):
+        my_form = MySuggestionForm(request.POST)
+        if my_form.is_valid():
+            my_titles = my_form.cleaned_data['titles']
+            my_list_movie = my_titles.split(", ")
+            for movi in my_list_movie:
+                sg = Suggestion()
+                sg.title = movi
+                sg.save()
+
+        return HttpResponseRedirect(reverse_lazy('movies_app:suggestion'))
+
+
+
 class MyLoginView(View):
 
     def __init__(self):
@@ -121,7 +146,6 @@ class MyLoginView(View):
                 if not ValidatorToken.objects.filter(user=the_user).exists():
                     vt = ValidatorToken()
                     vt.user = the_user
-                    donwload_movie.delay()
                     vt.save()
 
                 return HttpResponseRedirect(reverse_lazy('movies_app:home'))

@@ -15,15 +15,27 @@ from django.utils.text import slugify
 
 
 
-# para hacer referencia al usuario del sistema
-User = get_user_model()
 
-# para definir donde se almacenarán los posters
+User = get_user_model()
+"""Variable to reference a system user"""
+
+
 def movie_directory_path(instance,filename):
+    """
+    function to define store path of the posters
+    Args:
+        instance: image file
+        filename: a string that will name the file
+
+    Returns: path of the image storage ubication
+
+    """
     return f'movie/{instance.title}/{filename}'
+
 
 class Genre(models.Model):
     """Contains all gender of movies"""
+
     name = models.CharField(max_length=20)
     description = models.CharField(max_length=100)
 
@@ -33,6 +45,7 @@ class Genre(models.Model):
 
 class Language(models.Model):
     """Contains all posible language """
+
     name = models.CharField(max_length=50)
 
     def __str__(self):
@@ -41,6 +54,7 @@ class Language(models.Model):
 
 class Country(models.Model):
     """Contain all contry where movies are meked"""
+
     name = models.CharField(max_length=50)
 
     def __str__(self):
@@ -50,6 +64,7 @@ class Country(models.Model):
 
 class Movie(models.Model):
     """Constins all information of a movie"""
+
     title = models.CharField(max_length=100)
     duration = models.PositiveIntegerField()
     poster = models.ImageField(upload_to=movie_directory_path)
@@ -80,6 +95,7 @@ class Movie(models.Model):
 
 class Director(models.Model):
     """Contain all director that manage movies"""
+
     name = models.CharField(max_length=50)
     age = models.PositiveIntegerField()
     movie = models.ManyToManyField(Movie)
@@ -91,6 +107,7 @@ class Director(models.Model):
 
 class Actor(models.Model):
     """Contain all actors that acts in movies"""
+
     name = models.CharField(max_length=50)
     age = models.PositiveIntegerField()
     movie = models.ManyToManyField(Movie)
@@ -101,6 +118,7 @@ class Actor(models.Model):
 
 class Rate(models.Model):
     """Contins all comments that users made"""
+
     rate = models.FloatField(validators=[MinValueValidator(0),MaxValueValidator(5)])
     movie = models.ForeignKey(Movie,on_delete = models.CASCADE)
     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
@@ -120,5 +138,16 @@ class Rate(models.Model):
 
 
 class ValidatorToken(models.Model):
+    """Storage a token for validate users"""
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+
+
+class Suggestion(models.Model):
+    """storage sugestion to be downloaded in loop of time [task]"""
+
+    title = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.title

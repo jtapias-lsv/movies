@@ -1,7 +1,7 @@
 
 from rest_framework import viewsets
-from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
+from rest_framework.generics import get_object_or_404
 from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_200_OK
 
 from movies_app.api.serializers import MovieRateSerializer, MovieRateSerializer2, MovieSerializer
@@ -9,17 +9,19 @@ from movies_app.models import Rate, Movie
 
 from rest_framework.decorators import action
 from rest_framework.permissions import DjangoModelPermissions
-from movies_app.api.permissions import IsAuthenticatedOrReadOnlyCustom
 from rest_framework.authentication import TokenAuthentication
-
+from movies_app.api.permissions import IsAuthenticatedOrReadOnlyCustom
 
 class ExampleViewset(viewsets.ReadOnlyModelViewSet):
+    """Extmple viewset whit authentication"""
 
     queryset = Rate.objects.all()
     serializer_class = MovieRateSerializer
     authentication_classes = (TokenAuthentication,)
 
+
 class MovieViewset(viewsets.ModelViewSet):
+    """ViewSets whit ModelViewSet defining some methods"""
 
     queryset = Movie.objects.all()
     authentication_classes = (TokenAuthentication,)
@@ -48,6 +50,8 @@ class MovieViewset(viewsets.ModelViewSet):
             serializer.save(movie=obj, user=request.user)
         return Response(data=self.get_serializer(serializer.instance).data)
 
+
+
 # class RateViewSet(viewsets.ModelViewSet):
 #     queryset = Rate.objects.all()
 #     serializer_class = MovieRateSerializer2
@@ -62,7 +66,10 @@ class MovieViewset(viewsets.ModelViewSet):
 #         try:
 #             Rate.objects.create(rate=request.data.get('rate'), movie=obj, user=request.user)
 #         except:
-#             return Response({'error': f'can not crcreate '})
+#             return Response({'error': f'can not create '})
+
+
+# ------------I didn't erase below code to see the difference between ViewSet an ModelViewSets------------------
 
 #class ExampleViewset(viewsets.ViewSet):
     # model = Rate

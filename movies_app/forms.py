@@ -68,3 +68,8 @@ class MyDownLoadForm(forms.Form):
 
     title_movie = forms.CharField(label='Titulo', max_length=100)
     reciver_mail = forms.CharField(label='Email', max_length=100)
+
+
+class MySuggestionForm(forms.Form):
+
+    titles = forms.CharField(label='Sugerencias', max_length=100)

@@ -15,5 +15,6 @@ urlpatterns = [
     path('movie/',views.MovieCreateListView.as_view(),name='movie-li-cre'),
     path('movie/<slug>',views.MovieDetailUpdateDeleteView.as_view(),name='movie-de-up-de'),
     path('download',views.MyDownLoadView.as_view(), name='download'),
+    path('suggestion',views.MySuggestionView.as_view(), name='suggestion'),
 
     ]

@@ -2,6 +2,7 @@ from django.db.models import QuerySet, Sum, Count, FloatField
 
 
 class MovieQuerySet(QuerySet):
+    """define movies for years"""
 
     def get_by_year(self, year=None):
         if year:
@@ -11,6 +12,7 @@ class MovieQuerySet(QuerySet):
 
 
 class MovieRateQuerySet(QuerySet):
+    """define a set of searches"""
 
     def get_best_rated(self):
         return self.values('movie').annotate(#movie__slug

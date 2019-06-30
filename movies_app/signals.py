@@ -7,5 +7,14 @@ from .models import Movie
 
 @receiver(pre_save, sender=Movie)
 def create_slug_for_movie(instance, **kwargs):
+    """
+    function to create a movie slug
+    Args:
+        instance: movie instance
+        **kwargs:
+
+    Returns: return movie instance
+
+    """
     instance.slug = slugify(instance.title)
     return instance
